@@ -41,6 +41,7 @@ void Game::Render()
 
 		// IA
 		_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
+		_deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		_deviceContext->IASetInputLayout(_inputLayout.Get());
 		_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -54,7 +55,8 @@ void Game::Render()
 
 		// OM
 
-		_deviceContext->Draw(_vertices.size(), 0);
+		//_deviceContext->Draw(_vertices.size(), 0);
+		_deviceContext->DrawIndexed(_indices.size(), 0, 0);
 	}
 
 	RenderEnd();
@@ -149,16 +151,18 @@ void Game::CreateGeometry()
 {
 	// Vertex Data
 	{
-		_vertices.resize(3);
+		_vertices.resize(4);
 
+		// 13
+		// 02
 		_vertices[0].position = Vec3(-0.5f, -0.5f, 0);
 		_vertices[0].color = Color(1.f, 0.f, 0.f, 1.f);
-
-		_vertices[1].position = Vec3(0, 0.5f, 0);
+		_vertices[1].position = Vec3(-0.5f, 0.5f, 0);
 		_vertices[1].color = Color(1.f, 0.f, 0.f, 1.f);
-
 		_vertices[2].position = Vec3(0.5f, -0.5f, 0);
 		_vertices[2].color = Color(1.f, 0.f, 0.f, 1.f);
+		_vertices[3].position = Vec3(0.5f, 0.5f, 0);
+		_vertices[3].color = Color(1.f, 0.f, 0.f, 1.f);
 	}
 	
 	// 위의 정보들은 cpu의 ram에 저장되는 내용이다. 이 내용들을 GPU의 VRAM에도 저장시켜줘야 한다.
@@ -174,7 +178,29 @@ void Game::CreateGeometry()
 		ZeroMemory(&data, sizeof(data));
 		data.pSysMem = _vertices.data(); // 첫 번째 데이터의 시작 주소.
 
-		_device->CreateBuffer(&desc, &data, _vertexBuffer.GetAddressOf());
+		HRESULT hr = _device->CreateBuffer(&desc, &data, _vertexBuffer.GetAddressOf());
+		CHECK(hr);
+	}
+
+	// Index
+	{
+		_indices = { 0, 1, 2, 2, 1, 3 };
+	}
+
+	// Index Buffer
+	{
+		D3D11_BUFFER_DESC desc;
+		ZeroMemory(&desc, sizeof(desc));
+		desc.Usage = D3D11_USAGE_IMMUTABLE;
+		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		desc.ByteWidth = (uint32)(sizeof(uint32) * _indices.size());
+
+		D3D11_SUBRESOURCE_DATA data;
+		ZeroMemory(&data, sizeof(data));
+		data.pSysMem = _indices.data(); // 첫 번째 데이터의 시작 주소.
+
+		HRESULT hr = _device->CreateBuffer(&desc, &data, _indexBuffer.GetAddressOf());
+		CHECK(hr);
 	}
 }
 
