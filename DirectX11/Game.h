@@ -26,6 +26,9 @@ private:
 	void CreateVS();
 	void CreatePS();
 
+	// Shader Resource View
+	void CreateSRV();
+
 	void LoadShaderFromFile(const wstring& path, const string& name, const string& version, ComPtr<ID3DBlob>& blob);
 
 private:
@@ -64,5 +67,8 @@ private:
 	ComPtr<ID3D11PixelShader> _pixelShader = nullptr;
 	ComPtr<ID3DBlob> _psBlob = nullptr;
 
+
+	// SRV
+	ComPtr<ID3D11ShaderResourceView> _shaderResourceView = nullptr;
  };
 

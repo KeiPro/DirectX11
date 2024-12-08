@@ -24,6 +24,8 @@ void Game::Init(HWND hwnd)
 	CreateVS();
 	CreateInputLayout();
 	CreatePS();
+
+	CreateSRV();
 }
 
 void Game::Update()
@@ -52,7 +54,7 @@ void Game::Render()
 
 		// PS
 		_deviceContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
-
+		_deviceContext->PSSetShaderResources(0, 1, _shaderResourceView.GetAddressOf());
 		// OM
 
 		//_deviceContext->Draw(_vertices.size(), 0);
@@ -156,13 +158,17 @@ void Game::CreateGeometry()
 		// 13
 		// 02
 		_vertices[0].position = Vec3(-0.5f, -0.5f, 0);
-		_vertices[0].color = Color(1.f, 0.f, 0.f, 1.f);
+		_vertices[0].uv = Vec2(0.f, 1.f);
+		//_vertices[0].color = Color(1.f, 0.f, 0.f, 1.f);
 		_vertices[1].position = Vec3(-0.5f, 0.5f, 0);
-		_vertices[1].color = Color(1.f, 0.f, 0.f, 1.f);
+		_vertices[1].uv = Vec2(0, 0);
+		//_vertices[1].color = Color(1.f, 0.f, 0.f, 1.f);
 		_vertices[2].position = Vec3(0.5f, -0.5f, 0);
-		_vertices[2].color = Color(1.f, 0.f, 0.f, 1.f);
+		_vertices[2].uv = Vec2(1.f, 1.f);
+		//_vertices[2].color = Color(1.f, 0.f, 0.f, 1.f);
 		_vertices[3].position = Vec3(0.5f, 0.5f, 0);
-		_vertices[3].color = Color(1.f, 0.f, 0.f, 1.f);
+		_vertices[3].uv = Vec2(1.f, 0.f);
+		//_vertices[3].color = Color(1.f, 0.f, 0.f, 1.f);
 	}
 	
 	// 위의 정보들은 cpu의 ram에 저장되는 내용이다. 이 내용들을 GPU의 VRAM에도 저장시켜줘야 한다.
@@ -210,7 +216,8 @@ void Game::CreateInputLayout()
 	D3D11_INPUT_ELEMENT_DESC layout[] =
 	{
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 
 	};
 
@@ -236,6 +243,19 @@ void Game::CreatePS()
 	// _psBlob에 있는 정보들을 토대로 Pixel Shader를 만들어준다.
 	HRESULT hr = _device->CreatePixelShader(_psBlob->GetBufferPointer(), _psBlob->GetBufferSize(), nullptr, _pixelShader.GetAddressOf());
 	CHECK(hr);
+}
+
+void Game::CreateSRV()
+{
+	DirectX::TexMetadata md;
+	DirectX::ScratchImage img;
+	HRESULT hr = ::LoadFromWICFile(L"character2.png", WIC_FLAGS_NONE, &md, img);
+	CHECK(hr);
+
+	hr = CreateShaderResourceView(_device.Get(), img.GetImages(), img.GetImageCount(), md, _shaderResourceView.GetAddressOf());
+	CHECK(hr);
+
+
 }
 
 void Game::LoadShaderFromFile(const wstring& path, const string& name, const string& version, ComPtr<ID3DBlob>& blob)
