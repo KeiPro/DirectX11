@@ -98,6 +98,7 @@ void Game::RenderBegin()
 // 위에서 설정한 것들을 제출한다.
 void Game::RenderEnd()
 {
+	// Present를 하게 되면 후면 버퍼에 있는 내용을 전면버퍼로 고속 복사가 이루어짐.
 	HRESULT hr = _swapChain->Present(1, 0);
 	CHECK(hr);
 }
