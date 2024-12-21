@@ -7,6 +7,7 @@
 #include "Struct.h"
 
 //STL
+#include <iostream>
 #include <vector>
 #include <list>
 #include <map>
@@ -37,3 +38,6 @@ using namespace Microsoft::WRL;
 #endif
 	
 #define CHECK(p)	assert(SUCCEEDED(p))
+
+// Engine
+#include "Graphics.h"

@@ -12,12 +12,9 @@ Game::~Game()
 void Game::Init(HWND hwnd)
 {
 	_hwnd = hwnd;
-	_width = GWinSizeX;
-	_height = GWinSizeY;
 
-	CreateDeviceAndSwapChain();
-	CreateRenderTargetView();
-	SetViewport();
+	_graphics = make_shared<Graphics>(hwnd);
+	//_graphics = new Graphics(hwnd);
 
 	// 삼각형의 기하학 도형을 만듦.
 	CreateGeometry();
@@ -51,19 +48,21 @@ void Game::Update()
 	ZeroMemory(&subResource, sizeof(subResource));
 
 	// cpu에서 gpu로 데이터를 복사하는 방법.
-	_deviceContext->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
+	_graphics->GetDeviceContext()->Map(_constantBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
 	::memcpy(subResource.pData, &_transformData, sizeof(_transformData));
-	_deviceContext->Unmap(_constantBuffer.Get(), 0);
+	_graphics->GetDeviceContext()->Unmap(_constantBuffer.Get(), 0);
 }
 
 void Game::Render()
 {
-	RenderBegin();
+	_graphics->RenderBegin();
 
 	// IA - VS - RS - PS - OM
 	{
 		uint32 stride = sizeof(Vertex);
 		uint32 offset = 0;
+
+		auto _deviceContext = _graphics->GetDeviceContext();
 
 		// IA
 		_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
@@ -90,92 +89,7 @@ void Game::Render()
 		_deviceContext->DrawIndexed(_indices.size(), 0, 0);
 	}
 
-	RenderEnd();
-}
-
-void Game::RenderBegin()
-{
-	// 최종 결과물을 도화지에 그려줘. OM : 렌더링 파이프라인의 맨 마지막 단계.
-	// 후면버퍼에 그려달라고 요청하는 단계.
-	_deviceContext->OMSetRenderTargets(1, _renderTargetView.GetAddressOf(), nullptr);
-	_deviceContext->ClearRenderTargetView(_renderTargetView.Get(), _clearColor); // 초기값으로 밀어줌.
-	_deviceContext->RSSetViewports(1, &_viewport); // 화면의 크기 정보. 
-
-}
-
-// 위에서 설정한 것들을 제출한다.
-void Game::RenderEnd()
-{
-	// Present를 하게 되면 후면 버퍼에 있는 내용을 전면버퍼로 고속 복사가 이루어짐.
-	HRESULT hr = _swapChain->Present(1, 0);
-	CHECK(hr);
-}
-
-void Game::CreateDeviceAndSwapChain()
-{
-	DXGI_SWAP_CHAIN_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	{
-		desc.BufferDesc.Width = _width;
-		desc.BufferDesc.Height = _height;
-		desc.BufferDesc.RefreshRate.Numerator = 60; // 화면 주사율
-		desc.BufferDesc.RefreshRate.Denominator = 1;
-		desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		desc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-		desc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-		desc.SampleDesc.Count = 1; // 멀티 샘플링.
-		desc.SampleDesc.Quality = 0;
-
-		// 최종적으로 화면에 그릴 때에 사용하겠다.
-		desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-		desc.BufferCount = 1; // 후면 버퍼는 1개만 사용
-		desc.OutputWindow = _hwnd;
-		desc.Windowed = true;
-		desc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	}
-
-	HRESULT hr = ::D3D11CreateDeviceAndSwapChain(
-		nullptr,
-		D3D_DRIVER_TYPE_HARDWARE,
-		nullptr,
-		0,
-		nullptr,
-		0,
-		D3D11_SDK_VERSION,
-		&desc,
-		_swapChain.GetAddressOf(),
-		_device.GetAddressOf(),
-		nullptr,
-		_deviceContext.GetAddressOf()
-	);
-
-	CHECK(hr);
-}
-
-// 위에서 D3D11CreateDeviceAndSwapChain을 할때 후면 버퍼를 만들어 졌다는 것은 알고 있는 상태.
-// 후면 버퍼는 _swapChain가 알고 있음.
-// 후면 버퍼에 그림을 그려달라고 요청을 해야 함.
-// 후면 버퍼를 묘사하는 _renderTargetView라는 곳에 그려달라.
-void Game::CreateRenderTargetView()
-{
-	HRESULT hr;
-
-	ComPtr<ID3D11Texture2D> backBuffer = nullptr;
-	hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf());
-	CHECK(hr);
-
-	_device->CreateRenderTargetView(backBuffer.Get(), nullptr, _renderTargetView.GetAddressOf());
-	CHECK(hr);
-}
-
-void Game::SetViewport()
-{
-	_viewport.TopLeftX = 0.f;
-	_viewport.TopLeftY = 0.f;
-	_viewport.Width = static_cast<float>(_width);
-	_viewport.Height = static_cast<float>(_height);
-	_viewport.MinDepth = 0.f;
-	_viewport.MaxDepth = 1.f;
+	_graphics->RenderEnd();
 }
 
 // 어떻게 삼각형을 묘사할 지.
@@ -214,7 +128,7 @@ void Game::CreateGeometry()
 		ZeroMemory(&data, sizeof(data));
 		data.pSysMem = _vertices.data(); // 첫 번째 데이터의 시작 주소.
 
-		HRESULT hr = _device->CreateBuffer(&desc, &data, _vertexBuffer.GetAddressOf());
+		HRESULT hr = _graphics->GetDevice()->CreateBuffer(&desc, &data, _vertexBuffer.GetAddressOf());
 		CHECK(hr);
 	}
 
@@ -235,7 +149,7 @@ void Game::CreateGeometry()
 		ZeroMemory(&data, sizeof(data));
 		data.pSysMem = _indices.data(); // 첫 번째 데이터의 시작 주소.
 
-		HRESULT hr = _device->CreateBuffer(&desc, &data, _indexBuffer.GetAddressOf());
+		HRESULT hr = _graphics->GetDevice()->CreateBuffer(&desc, &data, _indexBuffer.GetAddressOf());
 		CHECK(hr);
 	}
 }
@@ -252,7 +166,7 @@ void Game::CreateInputLayout()
 	};
 
 	const int32 count = sizeof(layout) / sizeof(D3D11_INPUT_ELEMENT_DESC);
-	_device->CreateInputLayout(layout, count, _vsBlob->GetBufferPointer(), _vsBlob->GetBufferSize(), _inputLayout.GetAddressOf());
+	_graphics->GetDevice()->CreateInputLayout(layout, count, _vsBlob->GetBufferPointer(), _vsBlob->GetBufferSize(), _inputLayout.GetAddressOf());
 }
 
 void Game::CreateVS()
@@ -261,7 +175,7 @@ void Game::CreateVS()
 	LoadShaderFromFile(L"Default.hlsl", "VS", "vs_5_0", _vsBlob);
 
 	// _vsBlob에 있는 정보들을 토대로 Vertex Shader를 만들어준다.
-	HRESULT hr = _device->CreateVertexShader(_vsBlob->GetBufferPointer(), _vsBlob->GetBufferSize(), nullptr, _vertexShader.GetAddressOf());
+	HRESULT hr = _graphics->GetDevice()->CreateVertexShader(_vsBlob->GetBufferPointer(), _vsBlob->GetBufferSize(), nullptr, _vertexShader.GetAddressOf());
 	CHECK(hr);
 }
 
@@ -271,7 +185,7 @@ void Game::CreatePS()
 	LoadShaderFromFile(L"Default.hlsl", "PS", "ps_5_0", _psBlob);
 
 	// _psBlob에 있는 정보들을 토대로 Pixel Shader를 만들어준다.
-	HRESULT hr = _device->CreatePixelShader(_psBlob->GetBufferPointer(), _psBlob->GetBufferSize(), nullptr, _pixelShader.GetAddressOf());
+	HRESULT hr = _graphics->GetDevice()->CreatePixelShader(_psBlob->GetBufferPointer(), _psBlob->GetBufferSize(), nullptr, _pixelShader.GetAddressOf());
 	CHECK(hr);
 }
 
@@ -283,7 +197,7 @@ void Game::CreateRasterizerState()
 	desc.CullMode = D3D11_CULL_BACK;
 	desc.FrontCounterClockwise = false;
 
-	HRESULT hr = _device->CreateRasterizerState(&desc, _rasterizerState.GetAddressOf());
+	HRESULT hr = _graphics->GetDevice()->CreateRasterizerState(&desc, _rasterizerState.GetAddressOf());
 	CHECK(hr);
 }
 
@@ -305,7 +219,7 @@ void Game::CreateSamplerState()
 	desc.MinLOD = FLT_MIN;
 	desc.MipLODBias = 0.0f;
 
-	_device->CreateSamplerState(&desc, _samplerState.GetAddressOf());
+	_graphics->GetDevice()->CreateSamplerState(&desc, _samplerState.GetAddressOf());
 
 }
 
@@ -325,7 +239,7 @@ void Game::CreateBlendState()
 	desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 	desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-	HRESULT hr = _device->CreateBlendState(&desc, _blendState.GetAddressOf());
+	HRESULT hr = _graphics->GetDevice()->CreateBlendState(&desc, _blendState.GetAddressOf());
 	CHECK(hr);
 }
 
@@ -336,7 +250,7 @@ void Game::CreateSRV()
 	HRESULT hr = ::LoadFromWICFile(L"character.png", WIC_FLAGS_NONE, &md, img);
 	CHECK(hr);
 
-	hr = CreateShaderResourceView(_device.Get(), img.GetImages(), img.GetImageCount(), md, _shaderResourceView.GetAddressOf());
+	hr = CreateShaderResourceView(_graphics->GetDevice().Get(), img.GetImages(), img.GetImageCount(), md, _shaderResourceView.GetAddressOf());
 	CHECK(hr);
 
 
@@ -351,7 +265,7 @@ void Game::CreateConstantBuffer()
 	desc.ByteWidth = sizeof(TransformData);
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-	HRESULT hr = _device->CreateBuffer(&desc, nullptr, _constantBuffer.GetAddressOf());
+	HRESULT hr = _graphics->GetDevice()->CreateBuffer(&desc, nullptr, _constantBuffer.GetAddressOf());
 	CHECK(hr);
 }
 
