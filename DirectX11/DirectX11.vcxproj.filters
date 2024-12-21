@@ -22,7 +22,7 @@
       <UniqueIdentifier>{c66286f5-a2e1-4d06-981c-7d1e3e42ebcf}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\99. Headers\Utils">
-      <UniqueIdentifier>{6e35f58a-7bf0-4010-9c53-76316b3e7718}</UniqueIdentifier>
+      <UniqueIdentifier>{5bd235e3-4c34-410a-820a-415910f035d5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -53,7 +53,7 @@
     <ClInclude Include="Game.h">
       <Filter>소스 파일\01. Main</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Downloads\2주차_소스코드\GameCoding\SimpleMath.h">
+    <ClInclude Include="SimpleMath.h">
       <Filter>소스 파일\99. Headers\Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -80,7 +80,7 @@
     <ClCompile Include="Game.cpp">
       <Filter>소스 파일\01. Main</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\Downloads\2주차_소스코드\GameCoding\SimpleMath.cpp">
+    <ClCompile Include="SimpleMath.cpp">
       <Filter>소스 파일\99. Headers\Utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,7 +90,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\Downloads\2주차_소스코드\GameCoding\SimpleMath.inl">
+    <None Include="SimpleMath.inl">
       <Filter>소스 파일\99. Headers\Utils</Filter>
     </None>
   </ItemGroup>
