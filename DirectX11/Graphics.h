@@ -34,6 +34,6 @@ private:
 	// Misc 
 	// 화면의 크기를 묘사.
 	D3D11_VIEWPORT _viewport = { 0 };
-	float _clearColor[4] = { 0.f, 0.f, 0.f, 0.f };
+	float _clearColor[4] = { 0.5f, 0.5f, 0.5f, 0.5f };
 };
 

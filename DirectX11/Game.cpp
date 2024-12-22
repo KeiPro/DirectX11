@@ -14,6 +14,7 @@ void Game::Init(HWND hwnd)
 	_hwnd = hwnd;
 
 	_graphics = make_shared<Graphics>(hwnd);
+	_vertexBuffer = make_shared<VertexBuffer>(_graphics->GetDevice());
 	//_graphics = new Graphics(hwnd);
 
 	// 삼각형의 기하학 도형을 만듦.
@@ -34,6 +35,8 @@ void Game::Init(HWND hwnd)
 void Game::Update()
 {
 	// Scale Rotation Translation	
+
+	_localPosition.x += 0.001f;
 
 	Matrix matScale = Matrix::CreateScale(_localScale / 3);
 	Matrix matRotation = Matrix::CreateRotationX(_localRotation.x);
@@ -65,7 +68,7 @@ void Game::Render()
 		auto _deviceContext = _graphics->GetDeviceContext();
 
 		// IA
-		_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
+		_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer->GetComPtr().GetAddressOf(), &stride, &offset);
 		_deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 		_deviceContext->IASetInputLayout(_inputLayout.Get());
 		_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -118,18 +121,7 @@ void Game::CreateGeometry()
 	// 위의 정보들은 cpu의 ram에 저장되는 내용이다. 이 내용들을 GPU의 VRAM에도 저장시켜줘야 한다.
 	// Vertex Buffer
 	{
-		D3D11_BUFFER_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
-		desc.Usage = D3D11_USAGE_IMMUTABLE;
-		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		desc.ByteWidth = (uint32)(sizeof(Vertex) * _vertices.size());
-		
-		D3D11_SUBRESOURCE_DATA data;
-		ZeroMemory(&data, sizeof(data));
-		data.pSysMem = _vertices.data(); // 첫 번째 데이터의 시작 주소.
-
-		HRESULT hr = _graphics->GetDevice()->CreateBuffer(&desc, &data, _vertexBuffer.GetAddressOf());
-		CHECK(hr);
+		_vertexBuffer->Create(_vertices);
 	}
 
 	// Index
@@ -247,7 +239,7 @@ void Game::CreateSRV()
 {
 	DirectX::TexMetadata md;
 	DirectX::ScratchImage img;
-	HRESULT hr = ::LoadFromWICFile(L"character.png", WIC_FLAGS_NONE, &md, img);
+	HRESULT hr = ::LoadFromWICFile(L"character2.png", WIC_FLAGS_NONE, &md, img);
 	CHECK(hr);
 
 	hr = CreateShaderResourceView(_graphics->GetDevice().Get(), img.GetImages(), img.GetImageCount(), md, _shaderResourceView.GetAddressOf());

@@ -41,3 +41,4 @@ using namespace Microsoft::WRL;
 
 // Engine
 #include "Graphics.h"
+#include "VertexBuffer.h"
