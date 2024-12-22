@@ -18,8 +18,6 @@ private:
 
 private:
 	HWND _hwnd;
-	uint32 _width = 0;
-	uint32 _height = 0;
 
 private:
 	// Device & SwapChain

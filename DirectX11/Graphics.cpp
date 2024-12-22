@@ -92,8 +92,8 @@ void Graphics::SetViewport()
 {
 	_viewport.TopLeftX = 0.f;
 	_viewport.TopLeftY = 0.f;
-	_viewport.Width = static_cast<float>(_width);
-	_viewport.Height = static_cast<float>(_height);
+	_viewport.Width = static_cast<float>(GWinSizeX);
+	_viewport.Height = static_cast<float>(GWinSizeY);
 	_viewport.MinDepth = 0.f;
 	_viewport.MaxDepth = 1.f;
 }
