@@ -15,7 +15,7 @@ void Game::Init(HWND hwnd)
 
 	_graphics = make_shared<Graphics>(hwnd);
 	_vertexBuffer = make_shared<VertexBuffer>(_graphics->GetDevice());
-	//_graphics = new Graphics(hwnd);
+	_indexBuffer = make_shared<IndexBuffer>(_graphics->GetDevice());
 
 	// 삼각형의 기하학 도형을 만듦.
 	CreateGeometry();
@@ -69,7 +69,7 @@ void Game::Render()
 
 		// IA
 		_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer->GetComPtr().GetAddressOf(), &stride, &offset);
-		_deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+		_deviceContext->IASetIndexBuffer(_indexBuffer->GetComPtr().Get(), DXGI_FORMAT_R32_UINT, 0);
 		_deviceContext->IASetInputLayout(_inputLayout.Get());
 		_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -131,18 +131,7 @@ void Game::CreateGeometry()
 
 	// Index Buffer
 	{
-		D3D11_BUFFER_DESC desc;
-		ZeroMemory(&desc, sizeof(desc));
-		desc.Usage = D3D11_USAGE_IMMUTABLE;
-		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-		desc.ByteWidth = (uint32)(sizeof(uint32) * _indices.size());
-
-		D3D11_SUBRESOURCE_DATA data;
-		ZeroMemory(&data, sizeof(data));
-		data.pSysMem = _indices.data(); // 첫 번째 데이터의 시작 주소.
-
-		HRESULT hr = _graphics->GetDevice()->CreateBuffer(&desc, &data, _indexBuffer.GetAddressOf());
-		CHECK(hr);
+		_indexBuffer->Create(_indices);
 	}
 }
 
