@@ -54,7 +54,8 @@ private:
 
 	vector<uint32> _indices;
 	shared_ptr<IndexBuffer> _indexBuffer;
-	ComPtr<ID3D11InputLayout> _inputLayout = nullptr;
+	shared_ptr<InputLayout> _inputLayout;
+	
 
 	// VS
 	ComPtr<ID3D11VertexShader> _vertexShader = nullptr;
