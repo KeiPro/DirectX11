@@ -18,8 +18,6 @@ private:
 	void CreateBlendState();
 	void CreateSRV();
 
-	void CreateConstantBuffer();
-
 private:
 	HWND _hwnd;
 	//uint32 _width = 0;
@@ -67,7 +65,7 @@ private:
 
 private:
 	TransformData _transformData;
-	ComPtr<ID3D11Buffer> _constantBuffer;
+	shared_ptr<ConstantBuffer<TransformData>> _constantBuffer;
 
 	Vec3 _localPosition = { 0.f, 0.f, 0.f };
 	Vec3 _localRotation = { 0.f, 0.f, 0.f };
