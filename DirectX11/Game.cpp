@@ -18,17 +18,26 @@ void Game::Init(HWND hwnd)
 	_indexBuffer = make_shared<IndexBuffer>(_graphics->GetDevice());
 	_inputLayout = make_shared<InputLayout>(_graphics->GetDevice());
 	_geometry = make_shared<Geometry<VertexTextureData>>();
+	_vertexShader = make_shared<VertexShader>(_graphics->GetDevice());
+	_pixelShader = make_shared<PixelShader>(_graphics->GetDevice());
 
 	// 삼각형의 기하학 도형을 만듦.
-	CreateGeometry();
-	CreateVS();
-	CreateInputLayout();
+	// Vertex Data
+	GeometryHelper::CreateRectangle(_geometry);
+	// Vertex Buffer
+	_vertexBuffer->Create(_geometry->GetVertices());
+	// Index Buffer
+	_indexBuffer->Create(_geometry->GetIndices());
+
+	_vertexShader->Create(L"Default.hlsl", "VS", "vs_5_0");
+
+	_inputLayout->Create(VertexTextureData::descs, _vertexShader->GetBlob());
 
 	CreateRasterizerState();
 	CreateSamplerState();
 	CreateBlendState();
 
-	CreatePS();
+	_pixelShader->Create(L"Default.hlsl", "PS", "ps_5_0");
 
 	CreateSRV();
 	CreateConstantBuffer();
@@ -76,14 +85,14 @@ void Game::Render()
 		_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		// VS
-		_deviceContext->VSSetShader(_vertexShader.Get(), nullptr, 0);
+		_deviceContext->VSSetShader(_vertexShader->GetComPtr().Get(), nullptr, 0);
 		_deviceContext->VSSetConstantBuffers(0, 1, _constantBuffer.GetAddressOf());
 
 		// RS
 		_deviceContext->RSSetState(_rasterizerState.Get());
 
 		// PS
-		_deviceContext->PSSetShader(_pixelShader.Get(), nullptr, 0);
+		_deviceContext->PSSetShader(_pixelShader->GetComPtr().Get(), nullptr, 0);
 		_deviceContext->PSSetShaderResources(0, 1, _shaderResourceView.GetAddressOf());
 		_deviceContext->PSSetSamplers(0, 1, _samplerState.GetAddressOf());
 		
@@ -95,53 +104,6 @@ void Game::Render()
 	}
 
 	_graphics->RenderEnd();
-}
-
-// 어떻게 삼각형을 묘사할 지.
-void Game::CreateGeometry()
-{
-	// Vertex Data
-	GeometryHelper::CreateRectangle(_geometry);
-	
-	// 위의 정보들은 cpu의 ram에 저장되는 내용이다. 이 내용들을 GPU의 VRAM에도 저장시켜줘야 한다.
-	// Vertex Buffer
-	_vertexBuffer->Create(_geometry->GetVertices());
-
-	// Index Buffer
-	_indexBuffer->Create(_geometry->GetIndices());
-}
-
-
-void Game::CreateInputLayout()
-{
-	vector<D3D11_INPUT_ELEMENT_DESC> layout =
-	{
-		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		//{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-
-	_inputLayout->Create(layout, _vsBlob);
-}
-
-void Game::CreateVS()
-{
-	// Shader를 로드해서 _vsBlob이라는 것을 만들어주고,
-	LoadShaderFromFile(L"Default.hlsl", "VS", "vs_5_0", _vsBlob);
-
-	// _vsBlob에 있는 정보들을 토대로 Vertex Shader를 만들어준다.
-	HRESULT hr = _graphics->GetDevice()->CreateVertexShader(_vsBlob->GetBufferPointer(), _vsBlob->GetBufferSize(), nullptr, _vertexShader.GetAddressOf());
-	CHECK(hr);
-}
-
-void Game::CreatePS()
-{
-	// Shader를 로드해서 _psBlob이라는 것을 만들어주고,
-	LoadShaderFromFile(L"Default.hlsl", "PS", "ps_5_0", _psBlob);
-
-	// _psBlob에 있는 정보들을 토대로 Pixel Shader를 만들어준다.
-	HRESULT hr = _graphics->GetDevice()->CreatePixelShader(_psBlob->GetBufferPointer(), _psBlob->GetBufferSize(), nullptr, _pixelShader.GetAddressOf());
-	CHECK(hr);
 }
 
 void Game::CreateRasterizerState()
@@ -221,23 +183,5 @@ void Game::CreateConstantBuffer()
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 	HRESULT hr = _graphics->GetDevice()->CreateBuffer(&desc, nullptr, _constantBuffer.GetAddressOf());
-	CHECK(hr);
-}
-
-void Game::LoadShaderFromFile(const wstring& path, const string& name, const string& version, ComPtr<ID3DBlob>& blob)
-{
-	const uint32 compileFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
-	HRESULT hr = ::D3DCompileFromFile(
-		path.c_str(),
-		nullptr,
-		D3D_COMPILE_STANDARD_FILE_INCLUDE,
-		name.c_str(),
-		version.c_str(),
-		compileFlag,
-		0,
-		blob.GetAddressOf(),
-		nullptr
-	);
-
 	CHECK(hr);
 }
