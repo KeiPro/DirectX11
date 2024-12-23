@@ -49,3 +49,4 @@ using namespace Microsoft::WRL;
 #include "VertexData.h"
 #include "Shader.h"
 #include "ConstantBuffer.h"
+#include "Texture.h"

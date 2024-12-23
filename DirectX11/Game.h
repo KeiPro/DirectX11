@@ -20,11 +20,7 @@ private:
 
 private:
 	HWND _hwnd;
-	//uint32 _width = 0;
-	//uint32 _height = 0;
-
 	shared_ptr<Graphics> _graphics;
-	//Graphics* _graphics;
 
 private:
 	
@@ -38,12 +34,9 @@ private:
 	float _clearColor[4] = { 0.f, 0.f, 0.f, 0.f };
 
 private:
+
 	// Geometry
-	//vector<Vertex> _vertices;
-	//vector<uint32> _indices;
-
 	shared_ptr<Geometry<VertexTextureData>> _geometry;
-
 	shared_ptr<VertexBuffer> _vertexBuffer;
 	shared_ptr<IndexBuffer> _indexBuffer;
 	shared_ptr<InputLayout> _inputLayout;
@@ -58,12 +51,14 @@ private:
 	shared_ptr<PixelShader> _pixelShader;
 
 	// SRV
-	ComPtr<ID3D11ShaderResourceView> _shaderResourceView = nullptr;
+	shared_ptr<Texture> _texture;
 
 	ComPtr<ID3D11SamplerState> _samplerState = nullptr;
 	ComPtr<ID3D11BlendState> _blendState = nullptr;
 
 private:
+
+	//SRT
 	TransformData _transformData;
 	shared_ptr<ConstantBuffer<TransformData>> _constantBuffer;
 
