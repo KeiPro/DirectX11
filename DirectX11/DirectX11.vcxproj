@@ -150,6 +150,8 @@
     <ClInclude Include="DirectX11.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Geometry.h" />
+    <ClInclude Include="GeometryHelper.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputLayout.h" />
@@ -161,10 +163,13 @@
     <ClInclude Include="Types.h" />
     <ClInclude Include="Values.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexData.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DirectX11.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Geometry.cpp" />
+    <ClCompile Include="GeometryHelper.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
@@ -173,6 +178,7 @@
     </ClCompile>
     <ClCompile Include="SimpleMath.cpp" />
     <ClCompile Include="VertexBuffer.cpp" />
+    <ClCompile Include="VertexData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX11.rc" />
