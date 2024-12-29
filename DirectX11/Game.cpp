@@ -22,27 +22,26 @@ void Game::Init(HWND hwnd)
 	_pixelShader = make_shared<PixelShader>(_graphics->GetDevice());
 	_constantBuffer = make_shared<ConstantBuffer<TransformData>>(_graphics->GetDevice(), _graphics->GetDeviceContext());
 	_texture = make_shared<Texture>(_graphics->GetDevice());
+	_rasterizerState = make_shared<RasterizerState>(_graphics->GetDevice());
+	_samplerState = make_shared<SamplerState>(_graphics->GetDevice());
+	_blendState = make_shared<BlendState>(_graphics->GetDevice());
 
 	// 삼각형의 기하학 도형을 만듦.
 	// Vertex Data
 	GeometryHelper::CreateRectangle(_geometry);
-	// Vertex Buffer
 	_vertexBuffer->Create(_geometry->GetVertices());
-	// Index Buffer
 	_indexBuffer->Create(_geometry->GetIndices());
 
 	_vertexShader->Create(L"Default.hlsl", "VS", "vs_5_0");
-
 	_inputLayout->Create(VertexTextureData::descs, _vertexShader->GetBlob());
-
-	CreateRasterizerState();
-	CreateSamplerState();
-	CreateBlendState();
-
 	_pixelShader->Create(L"Default.hlsl", "PS", "ps_5_0");
 
-	_texture->Create(L"character2.png");
+	_rasterizerState->Create();
+	_samplerState->Create();
+	_blendState->Create();
 	
+	_texture->Create(L"character2.png");
+
 	_constantBuffer->Create();
 }
 
@@ -86,73 +85,19 @@ void Game::Render()
 		_deviceContext->VSSetConstantBuffers(0, 1, _constantBuffer->GetComPtr().GetAddressOf());
 
 		// RS
-		_deviceContext->RSSetState(_rasterizerState.Get());
+		_deviceContext->RSSetState(_rasterizerState->GetComPtr().Get());
 
 		// PS
 		_deviceContext->PSSetShader(_pixelShader->GetComPtr().Get(), nullptr, 0);
 		_deviceContext->PSSetShaderResources(0, 1, _texture->GetComPtr().GetAddressOf());
-		_deviceContext->PSSetSamplers(0, 1, _samplerState.GetAddressOf());
+		_deviceContext->PSSetSamplers(0, 1, _samplerState->GetComPtr().GetAddressOf());
 		
 		// OM
-		_deviceContext->OMSetBlendState(_blendState.Get(), nullptr, 0xFFFFFFFF);
+		_deviceContext->OMSetBlendState(_blendState->GetComPtr().Get(), _blendState->GetBlendFactor(), 0xFFFFFFFF);
 
 		//_deviceContext->Draw(_vertices.size(), 0);
 		_deviceContext->DrawIndexed(_geometry->GetIndexCount(), 0, 0);
 	}
 
 	_graphics->RenderEnd();
-}
-
-void Game::CreateRasterizerState()
-{
-	D3D11_RASTERIZER_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.FillMode = D3D11_FILL_SOLID;
-	desc.CullMode = D3D11_CULL_BACK;
-	desc.FrontCounterClockwise = false;
-
-	HRESULT hr = _graphics->GetDevice()->CreateRasterizerState(&desc, _rasterizerState.GetAddressOf());
-	CHECK(hr);
-}
-
-void Game::CreateSamplerState()
-{
-	D3D11_SAMPLER_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-	desc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-	desc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-	desc.BorderColor[0] = 1;
-	desc.BorderColor[1] = 0;
-	desc.BorderColor[2] = 0;
-	desc.BorderColor[3] = 1;
-	desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	desc.MaxAnisotropy = 16;
-	desc.MaxLOD = FLT_MAX;
-	desc.MinLOD = FLT_MIN;
-	desc.MipLODBias = 0.0f;
-
-	_graphics->GetDevice()->CreateSamplerState(&desc, _samplerState.GetAddressOf());
-
-}
-
-void Game::CreateBlendState()
-{
-	D3D11_BLEND_DESC desc;
-	ZeroMemory(&desc, sizeof(desc));
-	desc.AlphaToCoverageEnable = false;
-	desc.IndependentBlendEnable = false;
-
-	desc.RenderTarget[0].BlendEnable = true;
-	desc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-	desc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-	desc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-	desc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-	desc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-	desc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-	desc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-
-	HRESULT hr = _graphics->GetDevice()->CreateBlendState(&desc, _blendState.GetAddressOf());
-	CHECK(hr);
 }

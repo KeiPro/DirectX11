@@ -50,3 +50,6 @@ using namespace Microsoft::WRL;
 #include "Shader.h"
 #include "ConstantBuffer.h"
 #include "Texture.h"
+#include "BlendState.h"
+#include "SamplerState.h"
+#include "RasterizerState.h"

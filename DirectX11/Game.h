@@ -11,14 +11,6 @@ public:
 	void Render();
 
 private:
-
-	// Shader Resource View
-	void CreateRasterizerState();
-	void CreateSamplerState();
-	void CreateBlendState();
-	void CreateSRV();
-
-private:
 	HWND _hwnd;
 	shared_ptr<Graphics> _graphics;
 
@@ -43,18 +35,15 @@ private:
 
 	// VS
 	shared_ptr<VertexShader> _vertexShader;
-
 	// RS
-	ComPtr<ID3D11RasterizerState> _rasterizerState = nullptr;
-
+	shared_ptr<RasterizerState> _rasterizerState;
 	// PS
 	shared_ptr<PixelShader> _pixelShader;
 
 	// SRV
 	shared_ptr<Texture> _texture;
-
-	ComPtr<ID3D11SamplerState> _samplerState = nullptr;
-	ComPtr<ID3D11BlendState> _blendState = nullptr;
+	shared_ptr<SamplerState> _samplerState;
+	shared_ptr<BlendState> _blendState;
 
 private:
 
