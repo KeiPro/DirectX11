@@ -26,6 +26,9 @@ void Game::Init(HWND hwnd)
 	_samplerState = make_shared<SamplerState>(_graphics->GetDevice());
 	_blendState = make_shared<BlendState>(_graphics->GetDevice());
 
+	// 리소스를 묶는 역할.
+	_pipeline = make_shared<Pipeline>(_graphics->GetDeviceContext());
+
 	// 삼각형의 기하학 도형을 만듦.
 	// Vertex Data
 	GeometryHelper::CreateRectangle(_geometry);
@@ -69,34 +72,22 @@ void Game::Render()
 
 	// IA - VS - RS - PS - OM
 	{
-		uint32 stride = sizeof(VertexTextureData);
-		uint32 offset = 0;
+		PipelineInfo info;
+		info.inputLayout = _inputLayout;
+		info.vertexShader = _vertexShader;
+		info.pixelShader = _pixelShader;
+		info.rasterizerState = _rasterizerState;
+		info.blendState = _blendState;
+		_pipeline->UpdatePipeline(info);
 
 		auto _deviceContext = _graphics->GetDeviceContext();
+		_pipeline->SetVertexBuffer(_vertexBuffer);
+		_pipeline->SetIndexBuffer(_indexBuffer);
+		_pipeline->SetConstantBuffer(0, SS_VertexShader, _constantBuffer);
+		_pipeline->SetTexture(0, SS_PixelShader, _texture);
+		_pipeline->SetSamplerState(0, SS_PixelShader, _samplerState);
 
-		// IA
-		_deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer->GetComPtr().GetAddressOf(), &stride, &offset);
-		_deviceContext->IASetIndexBuffer(_indexBuffer->GetComPtr().Get(), DXGI_FORMAT_R32_UINT, 0);
-		_deviceContext->IASetInputLayout(_inputLayout->GetComPtr().Get());
-		_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		// VS
-		_deviceContext->VSSetShader(_vertexShader->GetComPtr().Get(), nullptr, 0);
-		_deviceContext->VSSetConstantBuffers(0, 1, _constantBuffer->GetComPtr().GetAddressOf());
-
-		// RS
-		_deviceContext->RSSetState(_rasterizerState->GetComPtr().Get());
-
-		// PS
-		_deviceContext->PSSetShader(_pixelShader->GetComPtr().Get(), nullptr, 0);
-		_deviceContext->PSSetShaderResources(0, 1, _texture->GetComPtr().GetAddressOf());
-		_deviceContext->PSSetSamplers(0, 1, _samplerState->GetComPtr().GetAddressOf());
-		
-		// OM
-		_deviceContext->OMSetBlendState(_blendState->GetComPtr().Get(), _blendState->GetBlendFactor(), 0xFFFFFFFF);
-
-		//_deviceContext->Draw(_vertices.size(), 0);
-		_deviceContext->DrawIndexed(_geometry->GetIndexCount(), 0, 0);
+		_pipeline->DrawIndexed(_geometry->GetIndexCount(), 0, 0);
 	}
 
 	_graphics->RenderEnd();

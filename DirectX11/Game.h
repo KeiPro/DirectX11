@@ -13,6 +13,7 @@ public:
 private:
 	HWND _hwnd;
 	shared_ptr<Graphics> _graphics;
+	shared_ptr<Pipeline> _pipeline;
 
 private:
 	
