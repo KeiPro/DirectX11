@@ -54,3 +54,4 @@ using namespace Microsoft::WRL;
 #include "SamplerState.h"
 #include "RasterizerState.h"
 #include "Pipeline.h"
+#include "Transform.h"
