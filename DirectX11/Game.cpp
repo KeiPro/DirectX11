@@ -18,6 +18,9 @@ void Game::Init(HWND hwnd)
 
 	// Create GameObject
 	_gameObject = make_shared<GameObject>(_graphics->GetDevice(), _graphics->GetDeviceContext());
+	{
+		_gameObject->GetOrAddTransform();
+	}
 }
 
 void Game::Update()

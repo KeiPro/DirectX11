@@ -12,6 +12,7 @@
 #include <list>
 #include <map>
 #include <unordered_map>
+#include <array>
 using namespace std;
 
 // WIN
