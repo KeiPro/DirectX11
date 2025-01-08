@@ -5,6 +5,7 @@
 #include "SceneManager.h"
 #include "TimeManager.h"
 #include "InputManager.h"
+#include "ResourceManager.h"
 
 unique_ptr<Game> GGame = make_unique<Game>();
 
@@ -31,6 +32,9 @@ void Game::Init(HWND hwnd)
 
 	_scene = make_shared<SceneManager>(_graphics);
 	_scene->Init();
+
+	_resource = make_shared<ResourceManager>(_graphics->GetDevice());
+	_resource->Init();
 
 	SCENE->LoadScene(L"Test");
 }
