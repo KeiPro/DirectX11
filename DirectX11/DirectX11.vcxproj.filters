@@ -173,6 +173,12 @@
     <ClInclude Include="SceneManager.h">
       <Filter>소스 파일\00. Engine\Manager\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>소스 파일\00. Engine\Manager\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeManager.h">
+      <Filter>소스 파일\00. Engine\Manager\Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DirectX11.rc">
@@ -265,6 +271,12 @@
     </ClCompile>
     <ClCompile Include="SceneManager.cpp">
       <Filter>소스 파일\00. Engine\Manager\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>소스 파일\00. Engine\Manager\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="TimeManager.cpp">
+      <Filter>소스 파일\00. Engine\Manager\Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

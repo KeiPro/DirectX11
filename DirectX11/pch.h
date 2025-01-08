@@ -41,7 +41,9 @@ using namespace Microsoft::WRL;
 #define CHECK(p)	assert(SUCCEEDED(p))
 
 #define		GAME		GGame
-#define		SCENE		GAME->GetSceneManager() 
+#define		SCENE		GAME->GetSceneManager()
+#define		TIME		GAME->GetTimeManager()
+#define		INPUT		GAME->GetInputManager()
 
 // Engine
 #include "Graphics.h"
