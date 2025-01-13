@@ -8,6 +8,7 @@
 #include "Transform.h"
 #include "ResourceManager.h"
 #include "Game.h"
+#include "Animator.h"
 
 SceneManager::SceneManager(shared_ptr<Graphics> graphics) : _graphics(graphics)
 {
@@ -66,6 +67,13 @@ shared_ptr<Scene> SceneManager::LoadTestScene()
 		meshRenderer->SetMaterial(material);
 		auto mesh = RESOURCES->Get<Mesh>(L"Rectangle");
 		meshRenderer->SetMesh(mesh);
+	}
+
+	{
+		auto animator = make_shared<Animator>();
+		monster->AddComponent(animator);
+		auto anim = RESOURCES->Get<Animation>(L"SnakeAnim");
+		animator->SetAnimatio(anim);
 	}
 
 	scene->AddGameObject(monster);
