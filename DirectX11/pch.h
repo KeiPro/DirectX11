@@ -19,6 +19,10 @@ using namespace std;
 #include <windows.h>
 #include <assert.h>
 
+// Utils
+#include "tinyxml2.h"
+using namespace tinyxml2;
+
 // DX 관련 라이브러리.
 #include <d3d11.h>
 #include <d3dcompiler.h>
