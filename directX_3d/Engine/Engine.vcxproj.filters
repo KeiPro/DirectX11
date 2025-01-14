@@ -102,6 +102,9 @@
     <ClInclude Include="Technique.h">
       <Filter>01. Graphics\Shader</Filter>
     </ClInclude>
+    <ClInclude Include="GeometryHelper.h">
+      <Filter>01. Graphics\Buffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -163,6 +166,9 @@
     </ClCompile>
     <ClCompile Include="Pass.cpp">
       <Filter>01. Graphics\Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="GeometryHelper.cpp">
+      <Filter>01. Graphics\Buffer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
