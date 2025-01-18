@@ -35,7 +35,7 @@ SamplerState Sampler0
 };
 
 float4 PS(VertexOutput input) : SV_TARGET
-{
+{ 
 	return Texture0.Sample(Sampler0, input.uv);
 }
 
