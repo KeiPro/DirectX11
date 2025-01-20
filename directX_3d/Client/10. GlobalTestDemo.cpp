@@ -7,7 +7,7 @@
 
 void GlobalTestDemo::Init()
 {	
-	auto shader = make_shared<Shader>(L"08. GlobalTest.fx");
+	_shader = make_shared<Shader>(L"08. GlobalTest.fx");
 
 	// Camera
 	_camera = make_shared<GameObject>();
@@ -23,7 +23,7 @@ void GlobalTestDemo::Init()
 	_obj->GetOrAddTransform();
 	_obj->AddComponent(make_shared<MeshRenderer>());
 	{
-		_obj->GetMeshRenderer()->SetShader(shader);
+		_obj->GetMeshRenderer()->SetShader(_shader);
 	}
 	{
 		RESOURCES->Init();
@@ -34,11 +34,16 @@ void GlobalTestDemo::Init()
 		auto texture = RESOURCES->Load<Texture>(L"Orianna", L"..\\Resources\\Textures\\orianna.jpg");
 		_obj->GetMeshRenderer()->SetTexture(texture);
 	}
+
+	RENDER->Init(_shader);
 }
 
 void GlobalTestDemo::Update()
 {
 	_camera->Update();
+
+	RENDER->Update();
+
 	_obj->Update();
 }
 

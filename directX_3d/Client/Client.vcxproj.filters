@@ -136,7 +136,7 @@
     <FxCompile Include="..\Shaders\00. Global.fx">
       <Filter>Shaders\Common</Filter>
     </FxCompile>
-    <FxCompile Include="..\Shaders\08 GlobalTest.fx">
+    <FxCompile Include="..\Shaders\08. GlobalTest.fx">
       <Filter>Shaders\Week2</Filter>
     </FxCompile>
   </ItemGroup>
