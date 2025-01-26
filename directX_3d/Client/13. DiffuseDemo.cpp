@@ -1,14 +1,14 @@
 #include "pch.h"
-#include "12. AmbientDemo.h"
+#include "13. DiffuseDemo.h"
 #include "GeometryHelper.h"
 #include "Camera.h"
 #include "CameraScript.h"
 #include "MeshRenderer.h"
 
-void AmbientDemo::Init()
+void DiffuseDemo::Init()
 {	
 	RESOURCES->Init();
-	_shader = make_shared<Shader>(L"09. Lighting_Ambient.fx");
+	_shader = make_shared<Shader>(L"10. Lighting_Diffuse.fx");
 	
 	// Camera
 	_camera = make_shared<GameObject>();
@@ -52,27 +52,31 @@ void AmbientDemo::Init()
 	RENDER->Init(_shader);
 }
 
-void AmbientDemo::Update()
+void DiffuseDemo::Update()
 {
 	_camera->Update();
 	RENDER->Update();
 
-	Vec4 lightAmbient{ 0.0f, 1.0f, 0.0f, 1.0f };
-	_shader->GetVector("LightAmbient")->SetFloatVector((float*)&lightAmbient);
+	Vec4 lightDiffuse{ 1.0f, 1.0f, 1.0f, 1.0f };
+	_shader->GetVector("LightDiffuse")->SetFloatVector((float*)&lightDiffuse);
+
+	Vec3 lightDir{ 1.f, -1.f, 1.f };
+	lightDir.Normalize();
+	_shader->GetVector("LightDir")->SetFloatVector((float*)&lightDir);
 
 	{
-		Vec4 materialAmbient(1.0f);
-		_shader->GetVector("MaterialAmbient")->SetFloatVector((float*)&materialAmbient);
+		Vec4 material(1.0f);
+		_shader->GetVector("MaterialDiffuse")->SetFloatVector((float*)&material);
 		_obj->Update();
 	}
 
 	{
-		Vec4 materialAmbient(1.0f);
-		_shader->GetVector("MaterialAmbient")->SetFloatVector((float*)&materialAmbient);
+		Vec4 material(1.0f);
+		_shader->GetVector("MaterialDiffuse")->SetFloatVector((float*)&material);
 		_obj2->Update();
 	}
 }
 
-void AmbientDemo::Render()
+void DiffuseDemo::Render()
 {
 }
