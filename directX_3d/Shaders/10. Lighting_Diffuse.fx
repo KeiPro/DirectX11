@@ -2,7 +2,7 @@
 
 float3 LightDir;
 float4 LightDiffuse; // 빛의 색상.
-float4 MaterialDiffuse;
+float4 MaterialDiffuse; // 물체가 받아들이는 색상.
 Texture2D DiffuseMap;
 
 VertexOutput VS(VertexTextureNormal input)
