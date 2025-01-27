@@ -25,8 +25,8 @@ MeshOutput VS(VertexTextureNormal input)
 
 float4 PS(MeshOutput input) : SV_TARGET
 {
-	//float3 R = reflect(LightDir, input.normal);
-	float3 R = LightDir - (2 * input.normal * dot(input.normal, LightDir));
+	float3 R = reflect(LightDir, input.normal);
+	//float3 R = LightDir - (2 * input.normal * dot(input.normal, LightDir));
 	R = normalize(R);
 
 	float3 cameraPosition = -V._41_42_43;
