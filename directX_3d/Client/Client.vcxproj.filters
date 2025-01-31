@@ -33,9 +33,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="CameraScript.cpp">
       <Filter>Main\Camera</Filter>
     </ClCompile>
@@ -93,12 +90,12 @@
     <ClCompile Include="18. NormalMappingDemo.cpp">
       <Filter>Game\Week2</Filter>
     </ClCompile>
+    <ClCompile Include="..\AssimpTool\Main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
-      <Filter>Main</Filter>
-    </ClInclude>
-    <ClInclude Include="Main.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="CameraScript.h">
@@ -157,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="18. NormalMappingDemo.h">
       <Filter>Game\Week2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\AssimpTool\Main.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
