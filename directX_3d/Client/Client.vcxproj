@@ -42,7 +42,6 @@
     <ClInclude Include="01. TriangleDemo.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\AssimpTool\Main.cpp" />
     <ClCompile Include="02. QuadDemo.cpp" />
     <ClCompile Include="03. ConstBufferDemo.cpp" />
     <ClCompile Include="04. CameraDemo.cpp" />
@@ -61,6 +60,7 @@
     <ClCompile Include="17. MaterialDemo.cpp" />
     <ClCompile Include="18. NormalMappingDemo.cpp" />
     <ClCompile Include="CameraScript.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

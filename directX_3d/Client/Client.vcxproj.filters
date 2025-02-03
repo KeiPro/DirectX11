@@ -90,7 +90,7 @@
     <ClCompile Include="18. NormalMappingDemo.cpp">
       <Filter>Game\Week2</Filter>
     </ClCompile>
-    <ClCompile Include="..\AssimpTool\Main.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
