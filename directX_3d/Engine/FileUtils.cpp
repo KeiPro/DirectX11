@@ -15,6 +15,7 @@ FileUtils::~FileUtils()
 	}
 }
 
+
 void FileUtils::Open(wstring filePath, FileMode mode)
 {
 	if (mode == FileMode::Write)
@@ -45,6 +46,7 @@ void FileUtils::Open(wstring filePath, FileMode mode)
 
 	assert(_handle != INVALID_HANDLE_VALUE);
 }
+
 
 void FileUtils::Write(void* data, uint32 dataSize)
 {

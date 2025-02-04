@@ -31,6 +31,9 @@
     <Filter Include="00. Engine\Resource">
       <UniqueIdentifier>{34c4eb2c-5f80-4b61-bb7a-02acae89218d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00. Engine\Resource\Model">
+      <UniqueIdentifier>{1cb72274-72d0-477e-ac60-54b876ce1fe4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -135,6 +138,15 @@
     <ClInclude Include="FileUtils.h">
       <Filter>98. Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>00. Engine\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelMesh.h">
+      <Filter>00. Engine\Resource\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelRenderer.h">
+      <Filter>04. Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -229,6 +241,15 @@
     </ClCompile>
     <ClCompile Include="FileUtils.cpp">
       <Filter>98. Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>00. Engine\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelMesh.cpp">
+      <Filter>00. Engine\Resource\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelRenderer.cpp">
+      <Filter>04. Component</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

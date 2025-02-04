@@ -8,10 +8,12 @@
 Converter::Converter()
 {
 	_importer = make_shared<Assimp::Importer>();
+
 }
 
 Converter::~Converter()
 {
+
 }
 
 void Converter::ReadAssetFile(wstring file)
@@ -64,17 +66,16 @@ void Converter::ReadModelData(aiNode* node, int32 index, int32 parent)
 		matParent = _bones[parent]->transform;
 
 	// Local (Root) Transform
-	// matParent를 곱해줌으로써 해당 노드가 월드 좌표계에서 어디에 있는가에 대해서 알게 된다.
 	bone->transform = bone->transform * matParent;
+
 	_bones.push_back(bone);
 
 	// Mesh
 	ReadMeshData(node, index);
 
+	// 재귀 함수
 	for (uint32 i = 0; i < node->mNumChildren; i++)
-	{
 		ReadModelData(node->mChildren[i], _bones.size(), index);
-	}
 }
 
 void Converter::ReadMeshData(aiNode* node, int32 bone)
@@ -114,7 +115,7 @@ void Converter::ReadMeshData(aiNode* node, int32 bone)
 			mesh->vertices.push_back(vertex);
 		}
 
-		// Index buffer
+		// Index
 		for (uint32 f = 0; f < srcMesh->mNumFaces; f++)
 		{
 			aiFace& face = srcMesh->mFaces[f];
@@ -137,7 +138,7 @@ void Converter::WriteModelFile(wstring finalPath)
 	shared_ptr<FileUtils> file = make_shared<FileUtils>();
 	file->Open(finalPath, FileMode::Write);
 
-	// Bond Data
+	// Bone Data
 	file->Write<uint32>(_bones.size());
 	for (shared_ptr<asBone>& bone : _bones)
 	{
@@ -190,7 +191,7 @@ void Converter::ReadMaterialData()
 
 		// Emissive
 		srcMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, color);
-		material->emissive = Color(color.r, color.g, color.b, 1.f);
+		material->emissive = Color(color.r, color.g, color.b, 1.0f);
 
 		aiString file;
 
@@ -282,7 +283,7 @@ void Converter::WriteMaterialData(wstring finalPath)
 	document->SaveFile(Utils::ToString(finalPath).c_str());
 }
 
-string Converter::WriteTexture(string saveFolder, string file)
+std::string Converter::WriteTexture(string saveFolder, string file)
 {
 	string fileName = filesystem::path(file).filename().string();
 	string folderName = filesystem::path(saveFolder).filename().string();
