@@ -4,11 +4,11 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{a4213cb3-9e07-441e-b134-49cf4b1f5786}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Main">
-      <UniqueIdentifier>{172768dc-43ec-4d5a-b55b-b4440ae8d6fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{3cbaabaa-1a66-4a72-b007-5151f7833dff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{172768dc-43ec-4d5a-b55b-b4440ae8d6fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +33,9 @@
     <ClCompile Include="StaticMeshDemo.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="ImGuiDemo.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Main.h">
@@ -54,6 +57,9 @@
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="StaticMeshDemo.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiDemo.h">
       <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
