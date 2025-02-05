@@ -340,3 +340,4 @@ std::string Converter::WriteTexture(string saveFolder, string file)
 
 	return fileName;
 }
+

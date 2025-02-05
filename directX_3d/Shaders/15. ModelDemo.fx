@@ -1,10 +1,21 @@
 #include "00. Global.fx"
 #include "00. Light.fx"
 
+#define MAX_MODEL_TRANSFORMS 50
+
+cbuffer BoneBuffer
+{
+	matrix BoneTransforms[MAX_MODEL_TRANSFORMS];
+};
+
+uint BoneIndex;
+
 MeshOutput VS(VertexTextureNormalTangent input)
 {
 	MeshOutput output;
-	output.position = mul(input.position, W);
+	output.position = mul(input.position, BoneTransforms[BoneIndex]);
+
+	output.position = mul(output.position, W);
 	output.position = mul(output.position, VP);
 	output.worldPosition = output.position.xyz;
 	output.uv = input.uv;
